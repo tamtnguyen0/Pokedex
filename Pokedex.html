@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <meta http-equiv="X-UA-Compatible" content="ie=edge">
+        <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+
+        <style>
+            #sprites{
+                width: 70%;
+                display: inline-block;
+            }
+        
+            #sidebar{
+                min-width: 100px; 
+                display: inline-block;
+                vertical-align: top;
+                /* outline: 5px solid red; */
+                position: fixed;
+                top: 20px;
+                left: 0px;
+            }
+
+            #sidebar img{
+                width: 100px;
+                display: block;
+                margin: auto;
+                object-fit: cover;
+                
+            }
+
+            #sidebar h1, #sidebar h3, #sidebar h4, #sidebar img{
+                display: block;
+                text-align: center;
+                margin: auto;
+            }
+
+        </style>
+    </head>
+
+
+    <body>
+
+        <div id="sprites"></div>
+        <div id="sidebar">
+            <h1></h1>
+            <img src="">
+            <h3></h3>
+            <h4 id='hght'></h4>
+            <h4 id="wght"></h4>
+        </div>
+    
+        <script>
+            var num_pokemon = 808;
+
+            for(var i = 1; i < num_pokemon + 1; i++) {
+                $('#sprites').append('<img id=img' + i + ' src="">');
+            }
+
+            $(document).ready( function() {
+                for(let j = 1; j < num_pokemon + 1; j++) {
+                    $.get( "https://pokeapi.co/api/v2/pokemon/" + j + "/", function(data) {
+                        $('#img'+j).attr({
+                              'src': data.sprites.front_default,
+                             'name': data.name,
+                             'hght': data.height / 10,
+                             'wght': data.weight / 10,
+                            'type1': data.types[data.types.length-1].type.name,
+                            'type2': data.types.length == 2 ? data.types[0].type.name : 0
+                        });
+
+                    })
+
+                }
+            })
+
+            $('#sprites img').click(function() {
+                $('#sidebar').css('left',$('#sprites').width()+20+'px')
+                // console.log($('#sprites').width());
+
+                $('#sidebar img').attr('src',$(this).attr('src'));
+                $('#sidebar h1').text(capitalize($(this).attr('name')));
+                if ($(this).attr('type2') != 0) {
+                    $('#sidebar h3').text('Types: ' + capitalize($(this).attr('type1')) + " / " + capitalize($(this).attr('type2')));
+                }
+                else {
+                    $('#sidebar h3').text('Type: ' + capitalize($(this).attr('type1')));
+                }
+                $('#sidebar #hght').text('Height: ' + capitalize($(this).attr('hght')) + ' meters');
+                $('#sidebar #wght').text('Weight: ' + capitalize($(this).attr('wght')) + ' kg');
+            })
+
+            function capitalize(str) {
+                return str[0].toUpperCase() + str.slice(1);
+            }
+            
+
+
+        
+        </script>
+    </body>
+
+
+</html>
